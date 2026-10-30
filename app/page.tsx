@@ -71,6 +71,8 @@ export default function Page() {
   const [running, setRunning] = useState(false)
   const [showAdd, setShowAdd] = useState(false)
   const [newGoal, setNewGoal] = useState('')
+  const [newTask, setNewTask] = useState('')
+  const [newSubject, setNewSubject] = useState('')
   const [topicOpen, setTopicOpen] = useState(true)
   const [greeting, setGreeting] = useState('Good afternoon')
   const [dateLabel, setDateLabel] = useState('Tuesday, May 6')
@@ -100,6 +102,12 @@ export default function Page() {
     setGoals((items) => [...items, { id: Date.now(), name: newGoal, meta: '0 of 0 topics', progress: 0, hours: '0h', color: '#7765e3', icon: 'NEW', due: 'Set a deadline', predicted: '—' }])
     setNewGoal(''); setShowAdd(false)
   }
+  function addTask() {
+    if (!newTask.trim()) return
+    setTasks((items) => [...items, { id: Date.now(), title: newTask.trim(), subject: newSubject.trim() || 'Personal study', time: 30, priority: 'Medium', due: 'Set a deadline', progress: 0, color: '#4a8fd8', done: false }])
+    setNewTask('')
+    setNewSubject('')
+  }
   function startTask(task: Task) { setFocus(task); setSeconds(25 * 60); setRunning(false) }
   const time = `${String(Math.floor(seconds / 60)).padStart(2, '0')}:${String(seconds % 60).padStart(2, '0')}`
 
@@ -116,6 +124,8 @@ export default function Page() {
       <header className="topbar"><div className="mobile-brand"><div className="brand-mark"><Sparkles size={15} /></div><strong>focus<span>flow</span></strong></div><div className="breadcrumbs"><span>Workspace</span><ChevronRight size={13} /><strong>{active}</strong></div><div className="top-actions"><button className="icon-btn"><Search size={17} /></button><button className="theme-btn"><Moon size={15} /> <span>Dark</span></button><div className="avatar">AK</div></div></header>
       <div className="page-wrap">
         <section className="welcome"><div><p className="eyebrow">{dateLabel}</p><h1>{greeting}, Alex <span>—</span></h1><p className="muted">A focused day starts with one clear next step.</p></div><button className="primary-btn" onClick={() => bestTask && startTask(bestTask)}><Play size={16} fill="currentColor" /> Start today&apos;s plan <ArrowUpRight size={15} /></button></section>
+
+        {active !== 'Dashboard' && <section className="workspace-panel"><div className="workspace-panel-head"><div><p className="eyebrow">Workspace</p><h2>{active}</h2><p className="muted">Manage your study data without leaving your planner.</p></div>{active === 'Important Goals' && <button className="primary-btn small" onClick={() => setShowAdd(true)}><Plus size={14} /> Add goal</button>}</div>{active === 'Daily Planner' || active === 'Syllabus & Topics' ? <div className="entry-form"><label>Task title<input value={newTask} onChange={(e) => setNewTask(e.target.value)} placeholder="e.g. Review recursion" /></label><label>Subject<input value={newSubject} onChange={(e) => setNewSubject(e.target.value)} placeholder="e.g. Data Structures" /></label><button className="primary-btn small" onClick={addTask}><Plus size={14} /> Add task</button></div> : active === 'Important Goals' ? <div className="workspace-list">{goals.map((goal) => <div className="workspace-row" key={goal.id}><div className="goal-icon" style={{ background: `${goal.color}18`, color: goal.color }}>{goal.icon}</div><div><strong>{goal.name}</strong><small>{goal.meta} · {goal.hours}</small></div><span>{goal.progress}%</span></div>)}</div> : <div className="workspace-list">{tasks.map((task) => <div className="workspace-row" key={task.id}><div className="task-number">{task.done ? <Check size={13} /> : task.id}</div><div><strong>{task.title}</strong><small>{task.subject} · {task.time} min</small></div><button className={`check-btn ${task.done ? 'checked' : ''}`} onClick={() => toggleTask(task.id)}>{task.done && <Check size={13} />}</button></div>)}</div>}</section>}
 
         <section className="stats-grid"><div className="stat-card"><div className="stat-icon purple"><Target size={17} /></div><div><span>Active goals</span><strong>{goals.length}</strong><small>+1 this month</small></div></div><div className="stat-card"><div className="stat-icon orange"><Clock3 size={17} /></div><div><span>Today&apos;s plan</span><strong>{Math.floor(plannedMinutes / 60)}h {plannedMinutes % 60}m</strong><small>{completed}/{tasks.length} tasks complete</small></div></div><div className="stat-card"><div className="stat-icon green"><Flame size={17} /></div><div><span>Study streak</span><strong>7 days</strong><small className="green-text">Personal best</small></div></div><div className="stat-card"><div className="stat-icon blue"><Trophy size={17} /></div><div><span>Weekly target</span><strong>68%</strong><small>+12% from last week</small></div></div></section>
 
