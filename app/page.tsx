@@ -72,6 +72,14 @@ export default function Page() {
   const [showAdd, setShowAdd] = useState(false)
   const [newGoal, setNewGoal] = useState('')
   const [topicOpen, setTopicOpen] = useState(true)
+  const [greeting, setGreeting] = useState('Good afternoon')
+  const [dateLabel, setDateLabel] = useState('Tuesday, May 6')
+
+  useEffect(() => {
+    const hour = new Date().getHours()
+    setGreeting(hour < 12 ? 'Good morning' : hour < 18 ? 'Good afternoon' : 'Good evening')
+    setDateLabel(new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date()))
+  }, [])
 
   useEffect(() => {
     const saved = window.localStorage.getItem('focusflow-demo')
