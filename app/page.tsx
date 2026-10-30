@@ -90,8 +90,6 @@ export default function Page() {
 
   const completed = tasks.filter((task) => task.done).length
   const plannedMinutes = tasks.reduce((sum, task) => sum + (task.done ? 0 : task.time), 0)
-  const greeting = new Date().getHours() < 12 ? 'Good morning' : new Date().getHours() < 18 ? 'Good afternoon' : 'Good evening'
-  const dateLabel = new Intl.DateTimeFormat('en-US', { weekday: 'long', month: 'long', day: 'numeric' }).format(new Date())
   const bestTask = useMemo(() => tasks.find((task) => !task.done) ?? tasks[0], [tasks])
 
   function toggleTask(id: number) {
